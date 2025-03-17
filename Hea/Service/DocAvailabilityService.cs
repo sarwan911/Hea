@@ -1,5 +1,6 @@
 ﻿using Hea.Models;
 using Hea.Repository;
+using NuGet.Protocol.Core.Types;
 
 namespace Hea.Service
 {
@@ -75,6 +76,15 @@ namespace Hea.Service
                 // Handle or log the exception
                 throw new Exception($"An error occurred while deleting the availability with ID {id}.", ex);
             }
+        }
+        public async Task GenerateDoctorAvailabilityAsync(int doctorId, string location, DateOnly availableDate)
+        {
+            await _docAvailabilityRepository.GenerateDoctorAvailabilityAsync(doctorId, location, availableDate);
+        }
+
+        public async Task DeletePastAvailabilityAsync()
+        {
+            await _docAvailabilityRepository.DeletePastAvailabilityAsync();
         }
     }
 }

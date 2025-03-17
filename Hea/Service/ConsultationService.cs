@@ -1,5 +1,6 @@
 ﻿using Hea.Models;
 using Hea.Repository;
+using NuGet.Protocol.Core.Types;
 
 namespace Hea.Service
 {
@@ -62,6 +63,10 @@ namespace Hea.Service
                 // Handle or log the exception
                 throw new Exception("An error occurred while adding the consultation using stored procedure.", ex);
             }
+        }
+        public async Task SendConsultationNotificationAsync(int appointmentId, int doctorId, string notes, string prescription, DateOnly consultationDate)
+        {
+            await _consultationRepository.SendConsultationNotificationAsync(appointmentId, doctorId, notes, prescription, consultationDate);
         }
 
         public async Task<bool> DeleteConsultation(int id)

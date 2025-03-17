@@ -9,5 +9,6 @@ namespace Hea.Service
         Task<Consultation> AddConsultation(Consultation consultation);
         Task<int> AddConsultationUsingSP(Consultation consultation);
         Task<bool> DeleteConsultation(int id);
+        Task SendConsultationNotificationAsync(int appointmentId, int doctorId, string notes, string prescription, DateOnly consultationDate);
     }
 }

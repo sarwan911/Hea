@@ -3,6 +3,10 @@ using Hea.Repository;
 using Hea;
 using Hea.Models;
 using Hea.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Data;
+using Hea.Service;
 
 namespace Hea.Repository
 {
@@ -40,6 +44,17 @@ namespace Hea.Repository
             _context.DocAvailabilities.Remove(availability);
             await _context.SaveChangesAsync();
             return true;
+        }
+        public async Task GenerateDoctorAvailabilityAsync(int doctorId, string location, DateOnly availableDate)
+        {
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC GenerateDoctorAvailability @p0, @p1, @p2",
+                doctorId, location, availableDate);
+        }
+
+        public async Task DeletePastAvailabilityAsync()
+        {
+            await _context.Database.ExecuteSqlRawAsync("EXEC DeletePastAvailability");
         }
     }
 }

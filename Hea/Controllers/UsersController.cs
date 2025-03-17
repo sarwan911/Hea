@@ -84,7 +84,7 @@ namespace Hea.Controllers
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("register")]
         [AllowAnonymous]
         public async Task<ActionResult<User>> PostUser(User user)
         {
@@ -96,7 +96,7 @@ namespace Hea.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -115,18 +115,9 @@ namespace Hea.Controllers
         {
             return _context.Users.Any(e => e.UserId == id);
         }
-        //[AllowAnonymous]
-        //[HttpPost("register")]
-        //public IActionResult Register([FromBody] User user)
-        //{
-        //    var result = _userService.CreateUser(user);
-        //    if (result == null)
-        //        return BadRequest("User registration failed.");
-        //    return Ok(result);
-        //}
         [AllowAnonymous]
-        // POST api/<UsersController>/authentication
-        [HttpPost("authentication")]
+        //POST api/<UsersController>/authentication
+       [HttpPost("authentication")]
         public IActionResult Authentication([FromBody] User user)
         {
             var token = _Auth.Authentication(user.UserId.ToString(), user.Password);

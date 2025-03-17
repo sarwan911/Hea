@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Hea.Data;
 using Hea.Models;
 using Microsoft.AspNetCore.Authorization;
+using Hea.Service;
 
 namespace Hea.Controllers
 {
@@ -16,22 +17,39 @@ namespace Hea.Controllers
     public class DocAvailabilitiesController : ControllerBase
     {
         private readonly Context _context;
+        private readonly IDocAvailabilityService _service;
 
-        public DocAvailabilitiesController(Context context)
+        public DocAvailabilitiesController(Context context, IDocAvailabilityService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/DocAvailabilities
         [HttpGet]
+        [Authorize(Roles ="Doctor, Patient")]
         public async Task<ActionResult<IEnumerable<DocAvailability>>> GetDocAvailabilities()
         {
             return await _context.DocAvailabilities.ToListAsync();
         }
+        [HttpPost("generate")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> GenerateDoctorAvailability(int doctorId, string location, DateOnly availableDate)
+        {
+            await _service.GenerateDoctorAvailabilityAsync(doctorId, location, availableDate);
+            return Ok();
+        }
 
+        [HttpDelete("delete-past")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> DeletePastAvailability()
+        {
+            await _service.DeletePastAvailabilityAsync();
+            return Ok();
+        }
         // GET: api/DocAvailabilities/5
         [HttpGet("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<ActionResult<DocAvailability>> GetDocAvailability(int id)
         {
             var docAvailability = await _context.DocAvailabilities.FindAsync(id);
@@ -47,7 +65,7 @@ namespace Hea.Controllers
         // PUT: api/DocAvailabilities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Doctor")]
         public async Task<IActionResult> PutDocAvailability(int id, DocAvailability docAvailability)
         {
             if (id != docAvailability.SessionId)
@@ -79,6 +97,7 @@ namespace Hea.Controllers
         // POST: api/DocAvailabilities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<DocAvailability>> PostDocAvailability(DocAvailability docAvailability)
         {
             _context.DocAvailabilities.Add(docAvailability);
@@ -89,7 +108,7 @@ namespace Hea.Controllers
 
         // DELETE: api/DocAvailabilities/5
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Doctor")]
         public async Task<IActionResult> DeleteDocAvailability(int id)
         {
             var docAvailability = await _context.DocAvailabilities.FindAsync(id);

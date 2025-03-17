@@ -10,5 +10,8 @@ namespace Hea.Repository
         Task<DocAvailability> AddAvailability(DocAvailability availability);
         Task<bool> DeleteAvailability(int id);
         Task<bool> IsSessionAvailable(int sessionId);
+
+        Task GenerateDoctorAvailabilityAsync(int doctorId, string location, DateOnly availableDate);
+        Task DeletePastAvailabilityAsync();
     }
 }

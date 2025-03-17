@@ -15,42 +15,6 @@ namespace Hea.Repository
             _context = context;
         }
 
-        public async Task<Appointment> BookAppointmentAsync(int sessionId, int patientId, string status)
-        {
-            return await _context.Appointments
-                .FromSqlRaw("EXEC sp_BookAppointment @p0, @p1, @p2",
-                    sessionId, patientId, "Booked")
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<Appointment> RescheduleAppointmentAsync(int appointmentId, int newSessionId)
-        {
-            return await _context.Appointments
-                .FromSqlRaw("EXEC sp_RescheduleAppointment @p0, @p1",
-                    appointmentId, newSessionId)
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<Appointment> CancelAppointmentAsync(int appointmentId)
-        {
-            return await _context.Appointments
-                .FromSqlRaw("EXEC sp_CancelAppointment @p0",
-                    appointmentId)
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<Appointment> GetAppointmentByIdAsync(int appointmentId)
-        {
-            return await _context.Appointments
-                .FromSqlRaw("EXEC sp_GetAppointmentById @p0",
-                    appointmentId)
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
-        }
-
         public async Task<Appointment> GetByIdAsync(int appointmentId)
         {
             return await _context.Appointments.FindAsync(appointmentId);
@@ -82,15 +46,24 @@ namespace Hea.Repository
                 await _context.SaveChangesAsync();
             }
         }
-
-        public async Task<List<Appointment>> GetAppointmentsForPatient(int patientId)
+        public async Task UpdateAppointmentAsync(int sessionId, int patientId, string status)
         {
-            return await _context.Appointments.Where(a => a.PatientId == patientId).ToListAsync();
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC UpdateAppointment @p0, @p1, @p2",
+                sessionId, patientId, status);
+        }
+        public async Task RescheduleAppointmentAsync(int appointmentId, int newSessionId)
+        {
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC RescheduleAppointment @p0, @p1",
+                appointmentId, newSessionId);
         }
 
-        public async Task<List<Appointment>> GetAppointmentsForDoctor(int doctorId)
+        public async Task CancelAppointmentAsync(int appointmentId)
         {
-            return await _context.Appointments.Where(a => a.SessionId == doctorId).ToListAsync();
-        }//an error here
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC CancelAppointment @p0",
+                appointmentId);
+        }
     }
 }

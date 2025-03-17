@@ -24,7 +24,7 @@ namespace Hea.Controllers
 
         // GET: api/Notifications
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications()
         {
             return await _context.Notifications.ToListAsync();
@@ -32,7 +32,7 @@ namespace Hea.Controllers
 
         // GET: api/Notifications/5
         [HttpGet("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<Notification>> GetNotification(int id)
         {
             var notification = await _context.Notifications.FindAsync(id);
@@ -48,7 +48,7 @@ namespace Hea.Controllers
         // PUT: api/Notifications/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> PutNotification(int id, Notification notification)
         {
             if (id != notification.NotificationId)
@@ -80,7 +80,7 @@ namespace Hea.Controllers
         // POST: api/Notifications
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<Notification>> PostNotification(Notification notification)
         {
             _context.Notifications.Add(notification);

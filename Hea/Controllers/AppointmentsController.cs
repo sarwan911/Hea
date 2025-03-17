@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Hea.Data;
 using Hea.Models;
 using Microsoft.AspNetCore.Authorization;
+using Hea.Service;
 
 namespace Hea.Controllers
 {
@@ -16,14 +17,17 @@ namespace Hea.Controllers
     public class AppointmentsController : ControllerBase
     {
         private readonly Context _context;
+        private readonly IAppointmentService _service;
 
-        public AppointmentsController(Context context)
+        public AppointmentsController(Context context, IAppointmentService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/Appointments
         [HttpGet]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
         {
             return await _context.Appointments.ToListAsync();
@@ -31,6 +35,7 @@ namespace Hea.Controllers
 
         // GET: api/Appointments/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<ActionResult<Appointment>> GetAppointment(int id)
         {
             var appointment = await _context.Appointments.FindAsync(id);
@@ -46,6 +51,7 @@ namespace Hea.Controllers
         // PUT: api/Appointments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<IActionResult> PutAppointment(int id, Appointment appointment)
         {
             if (id != appointment.AppointmentId)
@@ -76,8 +82,8 @@ namespace Hea.Controllers
 
         // POST: api/Appointments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-
         [HttpPost]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Appointment>> PostAppointment(Appointment appointment)
         {
             _context.Appointments.Add(appointment);
@@ -86,18 +92,9 @@ namespace Hea.Controllers
             return CreatedAtAction("GetAppointment", new { id = appointment.AppointmentId }, appointment);
         }
 
-        [HttpPost("BookAppointment")]
-        public async Task<ActionResult<Appointment>> BookAppointmentAsync(int sessionId, int patientId, string status)
-        {
-            var appointment = await _context.Appointments
-                .FromSqlRaw("EXEC sp_BookAppointment @p0, @p1, @p2",
-                    sessionId, patientId, status)
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
-            return CreatedAtAction("GetAppointment", new { sessionId, patientId, status});
-        }
         // DELETE: api/Appointments/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {
             var appointment = await _context.Appointments.FindAsync(id);
@@ -115,6 +112,29 @@ namespace Hea.Controllers
         private bool AppointmentExists(int id)
         {
             return _context.Appointments.Any(e => e.AppointmentId == id);
+        }
+
+        [HttpPost("Book_Appointment")]
+        [Authorize(Roles = "Doctor, Patient")]
+        public async Task<IActionResult> UpdateAppointment(int sessionId, int patientId, string status)
+        {
+            await _service.UpdateAppointmentAsync(sessionId, patientId, status);
+            return Ok();
+        }
+        [HttpPost("Reschedule_Appointment")]
+        [Authorize(Roles = "Doctor, Patient")]
+        public async Task<IActionResult> RescheduleAppointment(int appointmentId, int newSessionId)
+        {
+            var appointment = await _service.RescheduleAppointmentAsync(appointmentId, newSessionId);
+            return Ok(appointment);
+        }
+
+        [HttpPost("Cancel_Appointment")]
+        [Authorize(Roles= "Doctor, Patient")]
+        public async Task<IActionResult> CancelAppointment(int appointmentId)
+        {
+            var appointment = await _service.CancelAppointmentAsync(appointmentId);
+            return Ok(appointment);
         }
     }
 }
