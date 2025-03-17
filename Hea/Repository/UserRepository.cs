@@ -41,5 +41,14 @@ namespace Hea.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+        public IEnumerable<User> GetAllDoctors()
+        {
+            return _context.Users.Where(u => u.Role == "Doctor").ToList();
+        }
+
+        public IEnumerable<User> GetAllPatients()
+        {
+            return _context.Users.Where(u => u.Role == "Patient").ToList();
+        }
     }
 }

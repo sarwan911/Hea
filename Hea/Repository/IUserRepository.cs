@@ -9,5 +9,7 @@ namespace Hea.Repository
         Task<User> CreateUser(User user);
         Task<User> UpdateUser(User user);
         Task<bool> DeleteUser(int id);
+        IEnumerable<User> GetAllDoctors();
+        IEnumerable<User> GetAllPatients();
     }
 }

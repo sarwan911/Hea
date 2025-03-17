@@ -18,12 +18,14 @@ namespace Hea.Controllers
     public class UsersController : ControllerBase
     {
         private readonly Context _context;
+        private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
         private readonly IAuth _Auth;
 
-        public UsersController(Context context, IUserService _userService, IAuth Auth)
+        public UsersController(Context context, IUserRepository userRepository, IUserService _userService, IAuth Auth)
         {
             this._context = context;
+            this._userRepository = userRepository;
             this._userService = _userService;
             this._Auth = Auth;
         }
@@ -110,7 +112,20 @@ namespace Hea.Controllers
 
             return NoContent();
         }
-        
+        [HttpGet("Doctors")]
+        public IActionResult GetDoctors()
+        {
+            var doctors = _userRepository.GetAllDoctors();
+            return Ok(doctors);
+        }
+
+        // GET: api/User/Patients
+        [HttpGet("Patients")]
+        public IActionResult GetPatients()
+        {
+            var patients = _userRepository.GetAllPatients();
+            return Ok(patients);
+        }
         private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.UserId == id);
