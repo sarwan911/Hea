@@ -8,15 +8,21 @@ namespace Hea.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SessionId { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "DoctorId is required")]
         public int DoctorId { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "AvailableDate is required")]
         public DateOnly AvailableDate { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "StartTime is required")]
         public TimeOnly StartTime { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "EndTime is required")]
         public TimeOnly EndTime { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Location is required")]
+        [StringLength(200, ErrorMessage = "Location can't be longer than 200 characters")]
         public string Location { get; set; }
-    } 
+    }
 }

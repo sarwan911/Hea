@@ -8,10 +8,15 @@ namespace Hea.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AppointmentId { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "SessionId is required")]
         public int SessionId { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "PatientId is required")]
         public int PatientId { get; set; }
+
+        [Required(ErrorMessage = "Status is required")]
+        [RegularExpression("Booked|Rescheduled|Canceled", ErrorMessage = "Status must be either 'Booked', 'Rescheduled', or 'Canceled'")]
         public string Status { get; set; } // Booked, Rescheduled, Canceled
     }
 }
