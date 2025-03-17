@@ -22,12 +22,12 @@ namespace Hea.Controllers
         private readonly IUserService _userService;
         private readonly IAuth _Auth;
 
-        public UsersController(Context context, IUserRepository userRepository, IUserService _userService/*, IAuth Auth*/)
+        public UsersController(Context context, IUserRepository userRepository, IUserService _userService, IAuth Auth)
         {
             this._context = context;
             this._userRepository = userRepository;
             this._userService = _userService;
-            //this._Auth = Auth;
+            this._Auth = Auth;
         }
 
         // GET: api/Users
@@ -130,15 +130,32 @@ namespace Hea.Controllers
         {
             return _context.Users.Any(e => e.UserId == id);
         }
-       // [AllowAnonymous]
-       // //POST api/<UsersController>/authentication
-       //[HttpPost("authentication")]
-       // public IActionResult Authentication([FromBody] User user)
-       // {
-       //     var token = _Auth.Authentication(user.UserId.ToString(), user.Password);
-       //     if (token == null)
-       //         return Unauthorized();
-       //     return Ok(new { Token = token });
-       // }
+        //[AllowAnonymous]
+        ////POST api/<UsersController>/authentication
+        //[HttpPost("authentication")]
+        //public IActionResult Authentication([FromBody] User user)
+        //{
+        //    var token = _Auth.Authentication(user.UserId.ToString(), user.Password);
+        //    if (token == null)
+        //        return Unauthorized();
+        //    return Ok(new { Token = token });
+        //}
+
+        [AllowAnonymous]
+        // POST api/<UsersController>/authentication
+        [HttpPost("authentication")]
+        public IActionResult Authentication([FromBody] UserCredentials user)
+        {
+            var token = _Auth.Authentication(user.UserId.ToString(), user.Password);
+            if (token == null)
+                return Unauthorized();
+            return Ok(new { Token = token });
+        }
+
+        public class UserCredentials
+        {
+            public string UserId { get; set; }
+            public string Password { get; set; }
+        }
     }
 }

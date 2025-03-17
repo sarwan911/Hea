@@ -26,16 +26,17 @@ namespace Hea.Models
         [Range(0, 120, ErrorMessage = "Age must be between 0 and 120")]
         public int Age { get; set; }
 
-        [Required(ErrorMessage = "Phone number is required")]
-        [Phone(ErrorMessage = "Invalid Phone Number")]
+        [Required(ErrorMessage = "PhoneNumber is required.")]
+        [Range(1000000000, 9999999999, ErrorMessage = "Phone number should contain exactly 10 digits.")]
         public long Phone { get; set; }
 
         [Required(ErrorMessage = "Address is required")]
         [StringLength(200, ErrorMessage = "Address can't be longer than 200 characters")]
         public string Address { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long")]
+        [Required(ErrorMessage = "Password is required.")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long.")]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*\d).+$", ErrorMessage = "Password must contain at least one uppercase letter, one special character, and one number.")]
         public string Password { get; set; }
     }
 }
