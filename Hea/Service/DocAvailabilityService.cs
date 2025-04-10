@@ -100,5 +100,34 @@ namespace Hea.Service
                 throw new Exception($"An error occurred while deleting past doctor sessions.");
             }
         }
+
+        public async Task<IEnumerable<DocAvailability>> GetDoctorSessionsAsync(int doctorId)
+        {
+            try
+            {
+                var sessions = await _docAvailabilityRepository.GetDoctorSessionsAsync(doctorId);
+                if (!sessions.Any())
+                {
+                    throw new Exception($"No sessions found for doctor with ID {doctorId}.");
+                }
+                return sessions;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while retrieving sessions for doctor with ID {doctorId}.", ex);
+            }
+        }
+        public async Task DeletePastAvailabilityAsync(int doctorId)
+        {
+            try
+            {
+                await _docAvailabilityRepository.DeletePastAvailabilityAsync(doctorId);
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the exception
+                throw new Exception("An error occurred in the service layer.", ex);
+            }
+        }
     }
 }

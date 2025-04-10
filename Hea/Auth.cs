@@ -3,51 +3,49 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Hea.Data;
 using System.Text;
+using System.Linq;
+using Hea;
+using Hea.Service;
 
 namespace Hea
 {
     public class Auth : IAuth
     {
         private readonly string key;
-        private readonly Context _context;
+        private readonly Context context;
 
         public Auth(string key, Context context)
         {
             this.key = key;
-            _context = context;
+            this.context = context;
         }
 
         public string Authentication(string username, string password)
         {
-            var user = _context.Users.SingleOrDefault(u => u.UserId.ToString() == username && u.Password == password);
+            var user = context.Users.SingleOrDefault(u => u.UserId.ToString() == username && u.Password == password);
             if (user == null)
-            {
                 return null;
-            }
 
-            // 1. Create Security Token Handler
+            // Create token handler
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            // 2. Create Private Key to Encrypt
             var tokenKey = Encoding.ASCII.GetBytes(key);
 
-            // 3. Create JWT descriptor
+            // Create token descriptor
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
+                Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.Name, username),
                     new Claim(ClaimTypes.Role, user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
+                    new SymmetricSecurityKey(tokenKey),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
 
-            // 4. Create Token
+            // Create and return token
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            // 5. Return Token from method
             return tokenHandler.WriteToken(token);
         }
     }

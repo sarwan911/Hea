@@ -16,10 +16,18 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyCorsPolicy", builder => builder
+        .WithOrigins("http://localhost:3000")
+        .AllowAnyMethod()
+        .AllowCredentials()
+        .WithHeaders("Accept", "Content-Type", "Origin", "X-My-Header"));
+});
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthCareAppointmentSystem", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthCare Appointment System", Version = "v1" });
 
     // Define the security scheme
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -50,8 +58,8 @@ builder.Services.AddSwaggerGen(c =>
 
 var key = "This is my first secret Test Key for authentication, test it and use it when needed";
 
-builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
+//builder.Services.AddDbContext<Context>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
 
 builder.Services.AddAuthentication(x =>
 {
@@ -71,7 +79,7 @@ builder.Services.AddAuthentication(x =>
 });
 
 // Register Auth as a scoped service
-zbuilder.Services.AddScoped<IAuth>(provider => new Auth(key, provider.GetRequiredService<Context>()));
+builder.Services.AddScoped<IAuth>(provider => new Auth(key, provider.GetRequiredService<Context>()));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
@@ -97,9 +105,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("MyCorsPolicy");
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

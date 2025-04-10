@@ -9,11 +9,13 @@ using Hea.Data;
 using Hea.Models;
 using Microsoft.AspNetCore.Authorization;
 using Hea.Service;
+using Microsoft.AspNetCore.Cors;
 
 namespace Hea.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("MyCorsPolicy")]
     public class ConsultationsController : ControllerBase
     {
         private readonly Context _context;
@@ -27,7 +29,7 @@ namespace Hea.Controllers
 
         // GET: api/Consultations
         [HttpGet]
-        [Authorize(Roles = "Doctor, Patient")]
+        //[Authorize(Roles = "Doctor, Patient")]
         public async Task<ActionResult<IEnumerable<Consultation>>> GetConsultations()
         {
             return await _context.Consultations.ToListAsync();
@@ -35,7 +37,7 @@ namespace Hea.Controllers
 
         // GET: api/Consultations/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Doctor, Patient")]
+        //[Authorize(Roles = "Doctor, Patient")]
         public async Task<ActionResult<Consultation>> GetConsultation(int id)
         {
             var consultation = await _context.Consultations.FindAsync(id);
@@ -51,7 +53,7 @@ namespace Hea.Controllers
         // PUT: api/Consultations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize(Roles = "Doctor")]
+        //[Authorize(Roles = "Doctor")]
         public async Task<IActionResult> PutConsultation(int id, Consultation consultation)
         {
             if (id != consultation.ConsultationId)
@@ -82,19 +84,19 @@ namespace Hea.Controllers
 
         // POST: api/Consultations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        [Authorize(Roles = "Doctor")]
-        public async Task<ActionResult<Consultation>> PostConsultation(Consultation consultation)
-        {
-            _context.Consultations.Add(consultation);
-            await _context.SaveChangesAsync();
+        //[HttpPost]
+        //[Authorize(Roles = "Doctor")]
+        //public async Task<ActionResult<Consultation>> PostConsultation(Consultation consultation)
+        //{
+        //    _context.Consultations.Add(consultation);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetConsultation", new { id = consultation.ConsultationId }, consultation);
-        }
+        //    return CreatedAtAction("GetConsultation", new { id = consultation.ConsultationId }, consultation);
+        //}
 
         // DELETE: api/Consultations/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Doctor")]
+        //[Authorize(Roles = "Doctor")]
         public async Task<IActionResult> DeleteConsultation(int id)
         {
             var consultation = await _context.Consultations.FindAsync(id);
@@ -108,10 +110,11 @@ namespace Hea.Controllers
 
             return NoContent();
         }
-        [HttpPost("send-notification")]
-        public async Task<IActionResult> SendConsultationNotification(int appointmentId, int doctorId, string notes, string prescription, DateOnly consultationDate)
+        [HttpPost("Consultation")]
+        //[Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> SendConsultationNotification(int appointmentId, int doctorId, string notes, string prescription/*, DateOnly consultationDate*/)
         {
-            await _service.SendConsultationNotificationAsync(appointmentId, doctorId, notes, prescription, consultationDate);
+            await _service.SendConsultationNotificationAsync(appointmentId, doctorId, notes, prescription/*, consultationDate*/);
             return Ok();
         }
 

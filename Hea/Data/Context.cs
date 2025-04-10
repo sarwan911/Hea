@@ -11,6 +11,8 @@ namespace Hea.Data
         public DbSet<Consultation> Consultations { get; set; }
         public DbSet<DocAvailability> DocAvailabilities { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+
+
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
         //    // User Table
@@ -29,23 +31,23 @@ namespace Hea.Data
         //    modelBuilder.Entity<User>()
         //        .Property(u => u.Password)
         //        .IsRequired();
-            // Appointment Table
-            //modelBuilder.Entity<Appointment>()
-            //    .HasKey(a => a.AppointmentId);
-            //modelBuilder.Entity<Appointment>()
-            //    .Property(a => a.Status)
-            //    .IsRequired();
-            //modelBuilder.Entity<Appointment>()
-            //    .HasOne<User>()
-            //    .WithMany()
-            //    .HasForeignKey(a => a.PatientId)
-            //    .OnDelete(DeleteBehavior.Restrict);
-            //modelBuilder.Entity<Appointment>()
-            //    .HasOne<User>()
-            //    .WithMany()
-            //    //.HasForeignKey(a => a.DoctorId)
-            //    .OnDelete(DeleteBehavior.Restrict);
-            // Consultation Table
+        //    //Appointment Table
+        //    modelBuilder.Entity<Appointment>()
+        //        .HasKey(a => a.AppointmentId);
+        //    modelBuilder.Entity<Appointment>()
+        //        .Property(a => a.Status)
+        //        .IsRequired();
+        //    modelBuilder.Entity<Appointment>()
+        //        .HasOne<User>()
+        //        .WithMany()
+        //        .HasForeignKey(a => a.PatientId)
+        //        .OnDelete(DeleteBehavior.Restrict);
+        //    modelBuilder.Entity<Appointment>()
+        //        .HasOne<User>()
+        //        .WithMany()
+        //        //.HasForeignKey(a => a.DoctorId)
+        //        .OnDelete(DeleteBehavior.Restrict);
+        //    //Consultation Table
         //    modelBuilder.Entity<Consultation>()
         //        .HasKey(c => c.ConsultationId);
         //    modelBuilder.Entity<Consultation>()

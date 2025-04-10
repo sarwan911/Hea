@@ -12,11 +12,11 @@ namespace Hea.Service
             _notificationRepository = notificationRepository;
         }
 
-        public async Task<Notification> SendNotificationAsync(int userId, string type, string message, string status)
+        public async Task<Notification> SendNotificationAsync(int userId, string message, string status)
         {
             try
             {
-                return await _notificationRepository.SendNotificationAsync(userId, type, message, status);
+                return await _notificationRepository.SendNotificationAsync(userId, message, status);
             }
             catch (Exception ex)
             {

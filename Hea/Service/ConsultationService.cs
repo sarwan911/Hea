@@ -64,9 +64,9 @@ namespace Hea.Service
                 throw new Exception("An error occurred while adding the consultation using stored procedure.", ex);
             }
         }
-        public async Task SendConsultationNotificationAsync(int appointmentId, int doctorId, string notes, string prescription, DateOnly consultationDate)
+        public async Task SendConsultationNotificationAsync(int appointmentId, int doctorId, string notes, string prescription/*, DateOnly consultationDate*/)
         {
-            await _consultationRepository.SendConsultationNotificationAsync(appointmentId, doctorId, notes, prescription, consultationDate);
+            await _consultationRepository.SendConsultationNotificationAsync(appointmentId, doctorId, notes, prescription/*, consultationDate*/);
         }
 
         public async Task<bool> DeleteConsultation(int id)
@@ -79,6 +79,22 @@ namespace Hea.Service
             {
                 // Handle or log the exception
                 throw new Exception($"An error occurred while deleting the consultation with ID {id}.", ex);
+            }
+        }
+        public async Task<IEnumerable<Consultation>> GetDoctorConsultationsAsync(int doctorId)
+        {
+            try
+            {
+                var consultations = await _consultationRepository.GetDoctorConsultationsAsync(doctorId);
+                if (!consultations.Any())
+                {
+                    throw new Exception($"No consultations found for doctor with ID {doctorId}.");
+                }
+                return consultations;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while retrieving consultations for doctor with ID {doctorId}.", ex);
             }
         }
     }

@@ -92,5 +92,16 @@ namespace Hea.Service
             await _appointmentRepository.CancelAppointmentAsync(appointmentId);
             return await _appointmentRepository.GetByIdAsync(appointmentId);
         }
+        public async Task<IEnumerable<Appointment>> GetDoctorAppointmentsAsync(int doctorId)
+        {
+            var appointments = await _appointmentRepository.GetDoctorAppointmentsAsync(doctorId);
+
+            if (!appointments.Any())
+            {
+                throw new Exception("No appointments booked under this doctor.");
+            }
+
+            return appointments;
+        }
     }
 }

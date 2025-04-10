@@ -10,11 +10,14 @@ using Hea.Data;
 using Microsoft.AspNetCore.Authorization;
 using Hea.Repository;
 using Hea.Service;
+using Microsoft.AspNetCore.Cors;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Hea.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("MyCorsPolicy")]
     public class UsersController : ControllerBase
     {
         private readonly Context _context;
@@ -130,32 +133,17 @@ namespace Hea.Controllers
         {
             return _context.Users.Any(e => e.UserId == id);
         }
-        //[AllowAnonymous]
-        ////POST api/<UsersController>/authentication
-        //[HttpPost("authentication")]
-        //public IActionResult Authentication([FromBody] User user)
-        //{
-        //    var token = _Auth.Authentication(user.UserId.ToString(), user.Password);
-        //    if (token == null)
-        //        return Unauthorized();
-        //    return Ok(new { Token = token });
-        //}
 
         [AllowAnonymous]
         // POST api/<UsersController>/authentication
         [HttpPost("authentication")]
-        public IActionResult Authentication([FromBody] UserCredentials user)
+        public IActionResult Authentication(int user_id, string password)
         {
-            var token = _Auth.Authentication(user.UserId.ToString(), user.Password);
+            var token = _Auth.Authentication(user_id.ToString(), password);
             if (token == null)
                 return Unauthorized();
             return Ok(new { Token = token });
         }
-
-        public class UserCredentials
-        {
-            public int UserId { get; set; }
-            public string Password { get; set; }
-        }
     }
 }
+

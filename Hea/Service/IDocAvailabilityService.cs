@@ -11,5 +11,7 @@ namespace Hea.Service
         Task<bool> DeleteAvailability(int id);
         Task GenerateDoctorAvailabilityAsync(int doctorId, string location, DateOnly availableDate);
         Task DeletePastAvailabilityAsync();
+        Task<IEnumerable<DocAvailability>> GetDoctorSessionsAsync(int doctorId);
+        Task DeletePastAvailabilityAsync(int doctorId);
     }
 }

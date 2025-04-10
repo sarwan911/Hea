@@ -9,11 +9,13 @@ using Hea.Data;
 using Hea.Models;
 using Microsoft.AspNetCore.Authorization;
 using Hea.Service;
+using Microsoft.AspNetCore.Cors;
 
 namespace Hea.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("MyCorsPolicy")]
     public class DocAvailabilitiesController : ControllerBase
     {
         private readonly Context _context;
@@ -27,29 +29,43 @@ namespace Hea.Controllers
 
         // GET: api/DocAvailabilities
         [HttpGet]
-        [Authorize(Roles ="Doctor, Patient")]
+        //[Authorize(Roles ="Doctor, Patient")]
         public async Task<ActionResult<IEnumerable<DocAvailability>>> GetDocAvailabilities()
         {
             return await _context.DocAvailabilities.ToListAsync();
         }
+        
         [HttpPost("generate")]
-        [Authorize(Roles = "Doctor")]
+        ///[Authorize(Roles = "Doctor")]
         public async Task<IActionResult> GenerateDoctorAvailability(int doctorId, string location, DateOnly availableDate)
         {
             await _service.GenerateDoctorAvailabilityAsync(doctorId, location, availableDate);
-            return Ok();
+            return Ok(new { message = "Generated new sessions successfully." });
         }
 
-        [HttpDelete("delete-past")]
+        [HttpDelete("delete_past_sessions")]
         [Authorize(Roles = "Doctor")]
-        public async Task<IActionResult> DeletePastAvailability()
+        public async Task<IActionResult> DeletePastAvailabilities()
         {
             await _service.DeletePastAvailabilityAsync();
             return Ok();
         }
+
+        [HttpDelete("delete_past_sessions_of_his/her")]
+        //[Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> DeletePastAvailability()
+        {
+            var doctorId = int.Parse(User.Identity.Name);
+
+            await _service.DeletePastAvailabilityAsync(doctorId);
+            return Ok(new { message = "Past sessions are deleted successfully." });
+            //await _service.DeletePastAvailabilityAsync();
+            //return Ok();
+        }
+        
         // GET: api/DocAvailabilities/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Doctor, Patient")]
+        //[Authorize(Roles = "Doctor, Patient")]
         public async Task<ActionResult<DocAvailability>> GetDocAvailability(int id)
         {
             var docAvailability = await _context.DocAvailabilities.FindAsync(id);
@@ -65,7 +81,7 @@ namespace Hea.Controllers
         // PUT: api/DocAvailabilities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize(Roles = "Doctor")]
+        //[Authorize(Roles = "Doctor")]
         public async Task<IActionResult> PutDocAvailability(int id, DocAvailability docAvailability)
         {
             if (id != docAvailability.SessionId)
@@ -97,7 +113,7 @@ namespace Hea.Controllers
         // POST: api/DocAvailabilities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize(Roles = "Doctor")]
+        //[Authorize(Roles = "Doctor")]
         public async Task<ActionResult<DocAvailability>> PostDocAvailability(DocAvailability docAvailability)
         {
             _context.DocAvailabilities.Add(docAvailability);
@@ -108,7 +124,7 @@ namespace Hea.Controllers
 
         // DELETE: api/DocAvailabilities/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Doctor")]
+        //[Authorize(Roles = "Doctor")]
         public async Task<IActionResult> DeleteDocAvailability(int id)
         {
             var docAvailability = await _context.DocAvailabilities.FindAsync(id);
@@ -126,6 +142,27 @@ namespace Hea.Controllers
         private bool DocAvailabilityExists(int id)
         {
             return _context.DocAvailabilities.Any(e => e.SessionId == id);
+        }
+
+        [HttpGet("DoctorSessions")]
+        //[Authorize(Roles = "Doctor")]
+        public async Task<ActionResult<IEnumerable<DocAvailability>>> GetDoctorSessions()
+        {
+            // Get the logged-in doctor's ID from the claims
+            var doctorId = User.Identity.Name;
+
+            // Convert doctorId to integer
+            int docId = int.Parse(doctorId);
+
+            //try
+            //{
+                var sessions = await _service.GetDoctorSessionsAsync(docId);
+                return Ok(sessions);
+            //}
+            //catch (Exception ex)
+            //{
+            //    return NotFound(new { message = ex.Message });
+            //}
         }
     }
 }

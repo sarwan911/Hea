@@ -42,11 +42,17 @@ namespace Hea.Repository
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task SendConsultationNotificationAsync(int appointmentId, int doctorId, string notes, string prescription, DateOnly consultationDate)
+        public async Task SendConsultationNotificationAsync(int appointmentId, int doctorId, string notes, string prescription/*, DateOnly consultationDate*/)
         {
             await _context.Database.ExecuteSqlRawAsync(
-                "EXEC SendConsultationNotification @p0, @p1, @p2, @p3, @p4",
-                appointmentId, doctorId, notes, prescription, consultationDate);
+                "EXEC SendConsultationNotification @p0, @p1, @p2, @p3", //,@p4",
+                appointmentId, doctorId, notes, prescription/*, consultationDate*/);
+        }
+        public async Task<IEnumerable<Consultation>> GetDoctorConsultationsAsync(int doctorId)
+        {
+            return await _context.Consultations
+                .FromSqlRaw("EXEC GetDoctorConsultations @p0", doctorId)
+                .ToListAsync();
         }
     }
 }

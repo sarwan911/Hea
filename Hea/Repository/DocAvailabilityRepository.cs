@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using Hea.Service;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hea.Repository
 {
@@ -52,10 +51,19 @@ namespace Hea.Repository
                 "EXEC GenerateDoctorAvailability @p0, @p1, @p2",
                 doctorId, location, availableDate);
         }
-
+        public async Task DeletePastAvailabilityAsync(int doctorId)
+        {
+            await _context.Database.ExecuteSqlRawAsync("DeletePastAvailabilit @p0", doctorId);
+        }
         public async Task DeletePastAvailabilityAsync()
         {
-            await _context.Database.ExecuteSqlRawAsync("EXEC DeletePastAvailability");
+            await _context.Database.ExecuteSqlRawAsync("EXEC DeletePastAvailabilities");
+        }
+        public async Task<IEnumerable<DocAvailability>> GetDoctorSessionsAsync(int doctorId)
+        {
+            return await _context.DocAvailabilities
+                .FromSqlRaw("EXEC GetDoctorSessions @p0", doctorId)
+                .ToListAsync();
         }
     }
 }

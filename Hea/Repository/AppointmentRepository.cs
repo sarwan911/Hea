@@ -4,6 +4,7 @@ using Hea.Models;
 using Hea.Repository;
 using System.Reflection.Metadata;
 using System;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hea.Repository
 {
@@ -64,6 +65,19 @@ namespace Hea.Repository
             await _context.Database.ExecuteSqlRawAsync(
                 "EXEC CancelAppointment @p0",
                 appointmentId);
+        }
+        public async Task<IEnumerable<Appointment>> GetDoctorAppointmentsAsync(int doctorId)
+        {
+            var appointments = await _context.Appointments
+                .Join(_context.DocAvailabilities,
+                      a => a.SessionId,
+                      d => d.SessionId,
+                      (a, d) => new { a, d })
+                .Where(ad => ad.d.DoctorId == doctorId && ad.a.Status == "Booked")
+                .Select(ad => ad.a)
+                .ToListAsync();
+
+            return appointments;
         }
     }
 }

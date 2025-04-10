@@ -13,5 +13,7 @@ namespace Hea.Repository
 
         Task GenerateDoctorAvailabilityAsync(int doctorId, string location, DateOnly availableDate);
         Task DeletePastAvailabilityAsync();
+        Task<IEnumerable<DocAvailability>> GetDoctorSessionsAsync(int doctorId);
+        Task DeletePastAvailabilityAsync(int doctorId);
     }
 }

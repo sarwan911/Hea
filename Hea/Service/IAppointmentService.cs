@@ -12,5 +12,6 @@ namespace Hea.Service
         Task UpdateAppointmentAsync(int sessionId, int patientId, string status);
         Task<Appointment> RescheduleAppointmentAsync(int appointmentId, int newSessionId);
         Task<Appointment> CancelAppointmentAsync(int appointmentId);
+        Task<IEnumerable<Appointment>> GetDoctorAppointmentsAsync(int doctorId);
     }
 }

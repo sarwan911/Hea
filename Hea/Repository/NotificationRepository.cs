@@ -14,11 +14,11 @@ namespace Hea.Repository
             _context = context;
         }
 
-        public async Task<Notification> SendNotificationAsync(int userId, string type, string message, string status)
+        public async Task<Notification> SendNotificationAsync(int userId, string message, string status)
         {
             return await _context.Notifications
-                .FromSqlRaw("EXEC sp_ManageNotification @p0, @p1, @p2, @p3",
-                    userId, type, message, status)
+                .FromSqlRaw("EXEC sp_ManageNotification @p0, @p1, @p2",
+                    userId, message, status)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
