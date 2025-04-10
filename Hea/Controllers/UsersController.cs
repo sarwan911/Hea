@@ -154,7 +154,7 @@ namespace Hea.Controllers
 
         public class UserCredentials
         {
-            public string UserId { get; set; }
+            public int UserId { get; set; }
             public string Password { get; set; }
         }
     }

@@ -79,12 +79,26 @@ namespace Hea.Service
         }
         public async Task GenerateDoctorAvailabilityAsync(int doctorId, string location, DateOnly availableDate)
         {
-            await _docAvailabilityRepository.GenerateDoctorAvailabilityAsync(doctorId, location, availableDate);
+            try
+            {
+                await _docAvailabilityRepository.GenerateDoctorAvailabilityAsync(doctorId, location, availableDate);
+            }
+            catch (Exception)
+            {
+                throw new Exception($"An error occurred while Generating doctor sessions.");
+            }
         }
 
         public async Task DeletePastAvailabilityAsync()
         {
-            await _docAvailabilityRepository.DeletePastAvailabilityAsync();
+            try
+            {
+                await _docAvailabilityRepository.DeletePastAvailabilityAsync();
+            }
+            catch (Exception)
+            {
+                throw new Exception($"An error occurred while deleting past doctor sessions.");
+            }
         }
     }
 }

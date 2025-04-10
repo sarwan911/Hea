@@ -71,7 +71,7 @@ builder.Services.AddAuthentication(x =>
 });
 
 // Register Auth as a scoped service
-builder.Services.AddScoped<IAuth>(provider => new Auth(key, provider.GetRequiredService<Context>()));
+zbuilder.Services.AddScoped<IAuth>(provider => new Auth(key, provider.GetRequiredService<Context>()));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 

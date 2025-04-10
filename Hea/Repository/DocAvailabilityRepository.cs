@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using Hea.Service;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hea.Repository
 {
