@@ -10,6 +10,7 @@ using Hea.Models;
 using Microsoft.AspNetCore.Authorization;
 using Hea.Service;
 using Microsoft.AspNetCore.Cors;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Hea.Controllers
 {
@@ -25,6 +26,46 @@ namespace Hea.Controllers
         {
             _context = context;
             _service = service;
+        }
+        [HttpGet("AppointmentId")]
+        public async Task<ActionResult<IEnumerable<Consultation>>> GetConsultations(int appointmentId)
+        {
+            try
+            {
+                var consultations = await _context.Consultations
+                    .Where(n => n.AppointmentId == appointmentId)
+                    .ToListAsync();
+
+                if (consultations == null || !consultations.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(consultations);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+        [HttpGet("patient/{userId}/consultations")]
+        public async Task<ActionResult<IEnumerable<Consultation>>> GetConsultationsByUserId(int userId)
+        {
+            var consultations = await _context.Consultations
+                .Join(_context.Appointments,
+                      consultation => consultation.AppointmentId,
+                      appointment => appointment.AppointmentId,
+                      (consultation, appointment) => new { consultation, appointment })
+                .Where(ca => ca.appointment.PatientId == userId)
+                .Select(ca => ca.consultation)
+                .ToListAsync();
+
+            if (consultations == null || !consultations.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(consultations);
         }
 
         // GET: api/Consultations

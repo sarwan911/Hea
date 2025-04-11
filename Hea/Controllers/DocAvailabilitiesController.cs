@@ -10,6 +10,7 @@ using Hea.Models;
 using Microsoft.AspNetCore.Authorization;
 using Hea.Service;
 using Microsoft.AspNetCore.Cors;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Hea.Controllers
 {
@@ -143,7 +144,19 @@ namespace Hea.Controllers
         {
             return _context.DocAvailabilities.Any(e => e.SessionId == id);
         }
+        [HttpGet("doctor/{doctorId}")]
+        //[Authorize]
+        public async Task<ActionResult<IEnumerable<DocAvailability>>> GetDoctorSessions(int doctorId)
+        {
+            var sessions = await _service.GetDoctorSessionsAsync(doctorId);
 
+            if (sessions == null || !sessions.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(sessions);
+        }
         [HttpGet("DoctorSessions")]
         //[Authorize(Roles = "Doctor")]
         public async Task<ActionResult<IEnumerable<DocAvailability>>> GetDoctorSessions()

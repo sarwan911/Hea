@@ -22,13 +22,35 @@ namespace Hea.Controllers
             _context = context;
         }
 
-        // GET: api/Notifications
-        [HttpGet]
-        //[Authorize]
-        public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications()
+        [HttpGet("UserId")]
+        public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications(int userId)
         {
-            return await _context.Notifications.ToListAsync();
+            try
+            {
+                var notifications = await _context.Notifications
+                    .Where(n => n.UserId == userId)
+                    .ToListAsync();
+
+                if (notifications == null || !notifications.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(notifications);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
+
+        //// GET: api/Notifications
+        //[HttpGet]
+        ////[Authorize]
+        //public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications()
+        //{
+        //    return await _context.Notifications.ToListAsync();
+        //}
 
         // GET: api/Notifications/5
         [HttpGet("{id}")]

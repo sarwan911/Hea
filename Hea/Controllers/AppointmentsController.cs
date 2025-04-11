@@ -9,6 +9,7 @@ using Hea.Data;
 using Hea.Models;
 using Microsoft.AspNetCore.Authorization;
 using Hea.Service;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Hea.Controllers
 {
@@ -26,13 +27,28 @@ namespace Hea.Controllers
         }
 
         //GET: api/Appointments
-       [HttpGet]
+        [HttpGet]
        //[Authorize]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
         {
             return await _context.Appointments.ToListAsync();
         }
 
+        [HttpGet("patient/{userId}")]
+    //[Authorize]
+    public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointmentsByUserId(int userId)
+        {
+            var appointments = await _context.Appointments
+            .Where(a => a.PatientId == userId)
+            .ToListAsync();
+
+            if (appointments == null || !appointments.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(appointments);
+        }
         // GET: api/Appointments/5
         [HttpGet("{id}")]
         //[Authorize]
@@ -136,25 +152,25 @@ namespace Hea.Controllers
             var appointment = await _service.CancelAppointmentAsync(appointmentId);
             return Ok(appointment);
         }
-        //[HttpGet("Appointments_for_Doctor")]
-        ////[Authorize(Roles = "Doctor")]
-        //public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
-        //{
-        //    // Get the logged-in doctor's ID from the claims
-        //    var doctorId = User.Identity.Name;
+        [HttpGet("Appointments_for_Doctor")]
+        //[Authorize(Roles = "Doctor")]
+        public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointmentss()
+        {
+            // Get the logged-in doctor's ID from the claims
+            var doctorId = User.Identity.Name;
 
-        //    // Convert doctorId to integer
-        //    int docId = int.Parse(doctorId);
+            // Convert doctorId to integer
+            int docId = int.Parse(doctorId);
 
-        //    try
-        //    {
-        //        var appointments = await _service.GetDoctorAppointmentsAsync(docId);
-        //        return Ok(appointments);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return NotFound(new { message = ex.Message });
-        //    }
-        //}
+            try
+            {
+                var appointments = await _service.GetDoctorAppointmentsAsync(docId);
+                return Ok(appointments);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
     }
 }
