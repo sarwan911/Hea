@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using Hea.Data;
 using Hea.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 
 namespace Hea.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("MyCorsPolicy")]
     public class NotificationsController : ControllerBase
     {
         private readonly Context _context;

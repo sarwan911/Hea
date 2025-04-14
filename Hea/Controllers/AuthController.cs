@@ -1,10 +1,12 @@
 ﻿using Hea.Service;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hea.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("MyCorsPolicy")]
     public class AuthController : ControllerBase
     {
         private readonly IAuth _authService;

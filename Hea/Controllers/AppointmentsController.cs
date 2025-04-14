@@ -10,11 +10,13 @@ using Hea.Models;
 using Microsoft.AspNetCore.Authorization;
 using Hea.Service;
 using static System.Collections.Specialized.BitVector32;
+using Microsoft.AspNetCore.Cors;
 
 namespace Hea.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("MyCorsPolicy")]
     public class AppointmentsController : ControllerBase
     {
         private readonly Context _context;
@@ -28,14 +30,14 @@ namespace Hea.Controllers
 
         //GET: api/Appointments
         [HttpGet]
-       //[Authorize]
+       [Authorize]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
         {
             return await _context.Appointments.ToListAsync();
         }
 
         [HttpGet("patient/{userId}")]
-    //[Authorize]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointmentsByUserId(int userId)
         {
             var appointments = await _context.Appointments
@@ -51,7 +53,7 @@ namespace Hea.Controllers
         }
         // GET: api/Appointments/5
         [HttpGet("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Appointment>> GetAppointment(int id)
         {
             var appointment = await _context.Appointments.FindAsync(id);
@@ -67,7 +69,7 @@ namespace Hea.Controllers
         // PUT: api/Appointments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        //[Authorize(Roles = "Doctor, Patient")]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<IActionResult> PutAppointment(int id, Appointment appointment)
         {
             if (id != appointment.AppointmentId)
@@ -99,7 +101,7 @@ namespace Hea.Controllers
         // POST: api/Appointments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        //[Authorize(Roles = "Patient")]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Appointment>> PostAppointment(Appointment appointment)
         {
             _context.Appointments.Add(appointment);
@@ -110,7 +112,7 @@ namespace Hea.Controllers
 
         // DELETE: api/Appointments/5
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Doctor, Patient")]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {
             var appointment = await _context.Appointments.FindAsync(id);
@@ -131,14 +133,14 @@ namespace Hea.Controllers
         }
 
         [HttpPost("Book_Appointment")]
-        //[Authorize(Roles = "Doctor, Patient")]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<IActionResult> UpdateAppointment(int sessionId, int patientId, string status)
         {
             await _service.UpdateAppointmentAsync(sessionId, patientId, status);
             return Ok();
         }
         [HttpPost("Reschedule_Appointment")]
-        //[Authorize(Roles = "Doctor, Patient")]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<IActionResult> RescheduleAppointment(int appointmentId, int newSessionId)
         {
             var appointment = await _service.RescheduleAppointmentAsync(appointmentId, newSessionId);
@@ -146,14 +148,14 @@ namespace Hea.Controllers
         }
 
         [HttpPost("Cancel_Appointment")]
-        //[Authorize(Roles= "Doctor, Patient")]
+        [Authorize(Roles= "Doctor, Patient")]
         public async Task<IActionResult> CancelAppointment(int appointmentId)
         {
             var appointment = await _service.CancelAppointmentAsync(appointmentId);
             return Ok(appointment);
         }
         [HttpGet("Appointments_for_Doctor")]
-        //[Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointmentss()
         {
             // Get the logged-in doctor's ID from the claims
