@@ -6,6 +6,8 @@ using System.Text;
 using System.Linq;
 using Hea;
 using Hea.Service;
+using Hea.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hea
 {
@@ -47,6 +49,10 @@ namespace Hea
             // Create and return token
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+        public User? GetUser(string userId)
+        {
+            return context.Users.FirstOrDefault(u => u.UserId.ToString() == userId);
         }
     }
 }
