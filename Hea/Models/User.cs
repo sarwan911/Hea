@@ -7,7 +7,6 @@ namespace Hea.Models
     public class User
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "Name is required")]

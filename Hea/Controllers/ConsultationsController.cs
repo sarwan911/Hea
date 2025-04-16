@@ -48,7 +48,7 @@ namespace Hea.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
-        [HttpGet("patient/{userId}/consultations")]
+        [HttpGet("patient/{userId}")]
         public async Task<ActionResult<IEnumerable<Consultation>>> GetConsultationsByUserId(int userId)
         {
             var consultations = await _context.Consultations
