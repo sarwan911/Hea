@@ -51,6 +51,8 @@ namespace Hea.Controllers
 
             return Ok(appointments);
         }
+
+
         // GET: api/Appointments/5
         [HttpGet("{id}")]
         //[Authorize]

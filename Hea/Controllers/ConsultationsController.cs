@@ -68,6 +68,21 @@ namespace Hea.Controllers
             return Ok(consultations);
         }
 
+
+        [HttpGet("doctor/{doctorId}")]
+        public async Task<ActionResult<IEnumerable<Consultation>>> GetDoctorConsultations(int doctorId)
+        {
+            var consultations = await _service.GetDoctorConsultationsAsync(doctorId);
+
+            if (consultations == null || !consultations.Any())
+            {
+                return NotFound($"No consultations found for doctor with ID {doctorId}");
+            }
+
+            return Ok(consultations);
+        }
+
+
         // GET: api/Consultations
         [HttpGet]
         //[Authorize(Roles = "Doctor, Patient")]
@@ -125,19 +140,20 @@ namespace Hea.Controllers
 
         // POST: api/Consultations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
+        [HttpPost]
         //[Authorize(Roles = "Doctor")]
-        //public async Task<ActionResult<Consultation>> PostConsultation(Consultation consultation)
-        //{
-        //    _context.Consultations.Add(consultation);
-        //    await _context.SaveChangesAsync();
+        public async Task<ActionResult<Consultation>> PostConsultation(Consultation consultation)
+        {
+            _context.Consultations.Add(consultation);
+            await _context.SaveChangesAsync();
 
-        //    return CreatedAtAction("GetConsultation", new { id = consultation.ConsultationId }, consultation);
-        //}
+            return CreatedAtAction("GetConsultation", new { id = consultation.ConsultationId }, consultation);
+        }
 
         // DELETE: api/Consultations/5
         [HttpDelete("{id}")]
         //[Authorize(Roles = "Doctor")]
+
         public async Task<IActionResult> DeleteConsultation(int id)
         {
             var consultation = await _context.Consultations.FindAsync(id);

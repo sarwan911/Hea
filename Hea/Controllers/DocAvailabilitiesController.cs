@@ -37,7 +37,7 @@ namespace Hea.Controllers
         }
         
         [HttpPost("generate")]
-        ///[Authorize(Roles = "Doctor")]
+        //[Authorize(Roles = "Doctor")]
         public async Task<IActionResult> GenerateDoctorAvailability(int doctorId, string location, DateOnly availableDate)
         {
             await _service.GenerateDoctorAvailabilityAsync(doctorId, location, availableDate);
@@ -46,7 +46,7 @@ namespace Hea.Controllers
 
         [HttpDelete("delete_past_sessions")]
         [Authorize(Roles = "Doctor")]
-        public async Task<IActionResult> DeletePastAvailabilities()
+        public async Task<IActionResult> DeletePastAvailabilitiesAsync()
         {
             await _service.DeletePastAvailabilityAsync();
             return Ok();

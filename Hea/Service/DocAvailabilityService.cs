@@ -89,6 +89,8 @@ namespace Hea.Service
             }
         }
 
+
+
         public async Task DeletePastAvailabilityAsync()
         {
             try

@@ -47,12 +47,12 @@ namespace Hea.Controllers
         }
 
         //// GET: api/Notifications
-        //[HttpGet]
-        ////[Authorize]
-        //public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications()
-        //{
-        //    return await _context.Notifications.ToListAsync();
-        //}
+        [HttpGet]
+        //[Authorize]
+        public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications()
+        {
+            return await _context.Notifications.ToListAsync();
+        }
 
         // GET: api/Notifications/5
         [HttpGet("{id}")]
